@@ -1,9 +1,5 @@
 name: Fetch m3u8 Link
 
-- name: Lazımi Python paketlərini qur
-  run: |
-    pip install selenium
-
 on:
   workflow_dispatch:  # Əl ilə tetiklenme
   schedule:
@@ -36,3 +32,13 @@ jobs:
         with:
           name: m3u8-link
           path: m3u8_links/sahar1.m3u8.txt
+- name: Chrome və ChromeDriver quraşdır
+  run: |
+    sudo apt-get update
+    sudo apt-get install -y chromium-browser
+    sudo apt-get install -y chromium-chromedriver
+    sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+
+- name: Lazımi Python paketlərini qur
+  run: |
+    pip install selenium
