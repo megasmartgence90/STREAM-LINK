@@ -22,7 +22,7 @@ def info_to_text(stream_info, url):
 
 def main():
     try:
-        # Config faylını yüklə
+        # Konfiqurasiya faylını yüklə
         with open(sys.argv[1], "r") as f:
             config = json.load(f)
 
@@ -36,6 +36,14 @@ def main():
         master_folder = os.path.join(root_folder, master_folder_name)
         os.makedirs(best_folder, exist_ok=True)
         os.makedirs(master_folder, exist_ok=True)
+
+        # Burada m3u8 linkini əlavə edirik
+        config["channels"] = [
+            {
+                "slug": "example_channel",
+                "url": "https://nowtv-live-ad.ercdn.net/nowtv/nowtv_720p.m3u8?e=1751549326&st=YaVos3TgqqwXpDQvL4gwhA"
+            }
+        ]
 
         channels = config["channels"]
         for channel in channels:
@@ -79,11 +87,6 @@ def main():
                     master_text = '#EXTM3U\n' + master_text
                     best_text = '#EXTM3U\n' + best_text
 
-                # HTTPS -> HTTP çevrilməsi
-                if http_flag and plugin_name == "cinergroup":
-                    master_text = master_text.replace("https://", "http://")
-                    best_text = best_text.replace("https://", "http://")
-
                 # Faylları yadda saxla
                 master_file_path = os.path.join(master_folder, channel["slug"] + ".m3u8")
                 best_file_path = os.path.join(best_folder, channel["slug"] + ".m3u8")
@@ -108,3 +111,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
