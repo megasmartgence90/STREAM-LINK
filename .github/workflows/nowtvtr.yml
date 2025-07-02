@@ -2,9 +2,12 @@ name: nowtvtr action
 
 on:
   schedule:
-    - cron: '03 */3 * * *'
-  
-  workflow_dispatch:
+    - cron: '0 */2 * * *' # Hər 2 saatda bir işləyir
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Manual yeniləmə üçün tetikleme
+:
 
 jobs:
   build:
