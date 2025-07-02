@@ -6,9 +6,9 @@
     },
     "channels": [
         {
-            "name": "sahar",
-            "slug": "sahar",
-            "url": "https://sepehrtv.ir/live/sahar1"
+            "name": "showturk",
+            "slug": "showturk",
+            "url": "https://www.showturk.com.tr/canli-yayin/showturk"
         },
         {
             "name": "showmax",
