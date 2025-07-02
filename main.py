@@ -4,23 +4,15 @@ import re
 
 def get_m3u8_links(url):
     try:
-        # URL-dən məlumatları al
         response = requests.get(url)
-        response.raise_for_status()  # HTTP səhvlərini yoxlayır
-
-        # BeautifulSoup ilə HTML-i analiz et
+        response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # m3u8 linklərini tap
         m3u8_links = []
         for script in soup.find_all('script'):
             if script.string:
-                # m3u8 linkini tapmaq üçün regex istifadə et
                 found_links = re.findall(r'https?://[^\s]+\.m3u8', script.string)
                 m3u8_links.extend(found_links)
-
         return m3u8_links
-
     except Exception as e:
         print(f"Error: {e}")
         return []
@@ -28,7 +20,6 @@ def get_m3u8_links(url):
 def main():
     url = "https://www.nowtv.com.tr/canli-yayin"
     m3u8_links = get_m3u8_links(url)
-
     if m3u8_links:
         print("Found m3u8 links:")
         for link in m3u8_links:
