@@ -1,18 +1,23 @@
+import os
+import sys
+
+# --- Lazımi modulların yoxlanması və avtomatik quraşdırılması ---
+def ensure_module(module_name, package_name=None):
+    try:
+        __import__(module_name)
+    except ImportError:
+        print(f"{module_name} modulu tapılmadı. Quraşdırılır...")
+        os.system(f'pip install {package_name or module_name}')
+
+ensure_module("slugify", "python-slugify")
+ensure_module("tqdm")
+
+# --- Modul idxalları ---
 import re
 import requests
-import sys
 import json
-import os
 from urllib.parse import urljoin
-
-# --- slugify modulu yoxdursa, avtomatik quraşdır ---
-try:
-    from slugify import slugify
-except ImportError:
-    print("slugify modulu tapılmadı. Quraşdırılır...")
-    os.system('pip install python-slugify')
-    from slugify import slugify
-
+from slugify import slugify
 from tqdm import tqdm
 
 def get_stream_url(url, pattern, method="GET", headers={}, body={}):
