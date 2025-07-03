@@ -1,61 +1,34 @@
-name: Run main.py
+
+name: run main.py
 
 on:
   schedule:
-    - cron: '0 */2 * * *' # Hər 2 saatda bir işləyir
+    - cron: '0 */2 * * *' # Runs every 2 hours
   pull_request:
     branches:
       - main
-  workflow_dispatch: # Manual yeniləmə üçün tetikleme
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    steps:
-      # Repo-nu yüklə
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Python-u quraşdır
+    steps: 
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-
-      # Dependency-ləri yüklə
+            python-version: '3.x' 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # Python skriptini işlə
-      - name: Execute Python script
-        run: |
-          python main.py config.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Dəyişiklikləri commit və push et
-      - name: Commit and push changes
+          
+          pip3 install -r requirements.txt
+      - name: execute py script 
+        run: python main.py config.json
+      - name: commit and push files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
-          # Dəyişiklikləri yoxla
-          echo "Checking for changes..."
-          git status
-          
-          # Dəyişiklikləri əlavə et
           git add -A
-          
-          # Dəyişiklik varsa commit et
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            echo "Committing changes..."
-            git commit -m "Updated streams [skip ci]"
-            git push
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "updated streams"
+          git push
