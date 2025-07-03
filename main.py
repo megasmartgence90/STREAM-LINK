@@ -1,7 +1,7 @@
 import os
 import sys
 
-# --- Lazımi modulların yoxlanması və avtomatik quraşdırılması ---
+# Lazımi modulların yoxlanması və avtomatik quraşdırılması
 def ensure_module(module_name, package_name=None):
     try:
         __import__(module_name)
@@ -12,7 +12,7 @@ def ensure_module(module_name, package_name=None):
 ensure_module("slugify", "python-slugify")
 ensure_module("tqdm")
 
-# --- Modul idxalları ---
+# Modul idxalları
 import re
 import requests
 import json
@@ -21,18 +21,22 @@ from slugify import slugify
 from tqdm import tqdm
 
 def get_stream_url(url, pattern, method="GET", headers={}, body={}):
-    if method == "GET":
-        r = requests.get(url, headers=headers)
-    elif method == "POST":
-        r = requests.post(url, json=body, headers=headers)
-    else:
-        print(method, "dəstəklənmir və ya səhv yazılıb.")
-        return None
-    results = re.findall(pattern, r.text)
-    if len(results) > 0:
-        return results[0]
-    else:
-        print("Cavabda uyğun nəticə tapılmadı. Regex patterni yoxlayın: {} üçün {}".format(method, url))
+    try:
+        if method == "GET":
+            r = requests.get(url, headers=headers)
+        elif method == "POST":
+            r = requests.post(url, json=body, headers=headers)
+        else:
+            print(method, "dəstəklənmir və ya yanlışdır.")
+            return None
+        results = re.findall(pattern, r.text)
+        if results:
+            return results[0]
+        else:
+            print(f"Nəticə tapılmadı: {url}")
+            return None
+    except Exception as e:
+        print(f"Xəta baş verdi: {e}")
         return None
 
 def playlist_text(url):
@@ -52,38 +56,34 @@ def playlist_text(url):
     return ""
 
 def main():
-    config_file = open(sys.argv[1], "r", encoding="utf-8")
-    config = json.load(config_file)
-    for site in config:
-        site_path = os.path.join(os.getcwd(), site["slug"])
-        os.makedirs(site_path, exist_ok=True)
-        for channel in tqdm(site["channels"]):
-            channel_file_path = os.path.join(site_path, slugify(channel["name"].lower()) + ".m3u8")
-            channel_url = site["url"]
-            for variable in channel["variables"]:
-                channel_url = channel_url.replace(variable["name"], variable["value"])
-            stream_url = get_stream_url(channel_url, site["pattern"])
-            if not stream_url:
-                if os.path.isfile(channel_file_path):
-                    os.remove(channel_file_path)
-                continue
-            if site["output_filter"] not in stream_url:
-                if os.path.isfile(channel_file_path):
-                    os.remove(channel_file_path)
-                continue
-            if site["mode"] == "variant":
-                text = playlist_text(stream_url)
-            elif site["mode"] == "master":
-                text = "#EXTM3U\n##EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH={}\n{}".format(site["bandwidth"], stream_url)
-            else:
-                print("playlist mode yanlışdır və ya qeyd olunmayıb.")
-                text = ""
-            if text:
-                with open(channel_file_path, "w+", encoding="utf-8") as channel_file:
-                    channel_file.write(text)
-            else:
-                if os.path.isfile(channel_file_path):
-                    os.remove(channel_file_path)
+    with open(sys.argv[1], "r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
 
-if __name__ == "__main__": 
+    output_folder = config["output"].get("folder", "streams")
+    os.makedirs(output_folder, exist_ok=True)
+
+    for channel in tqdm(config["channels"]):
+        name = channel["name"]
+        slug = channel["slug"]
+        url = channel["url"]
+        filename = slugify(name.lower()) + ".txt"  # və ya .m3u8 əgər link tapılırsa
+
+        # Dummy bir regex pattern – realda dəyişdirilməlidir!
+        # Əgər real pattern varsa, config-ə əlavə et və buradan götür.
+        pattern = r"https?:\/\/.*?\.m3u8"
+
+        stream_url = get_stream_url(url, pattern)
+        if not stream_url:
+            continue
+
+        file_path = os.path.join(output_folder, filename)
+
+        text = playlist_text(stream_url)
+        if text:
+            with open(file_path, "w+", encoding="utf-8") as f:
+                f.write(text)
+        else:
+            print(f"{name} üçün yazı tapılmadı.")
+
+if __name__ == "__main__":
     main()
