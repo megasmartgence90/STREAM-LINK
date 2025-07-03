@@ -1,34 +1,38 @@
-
 name: run main.py
 
 on:
   schedule:
-    - cron: '0 */2 * * *' # Runs every 2 hours
+    - cron: '0 */2 * * *'  # Hər 2 saatda bir dəfə
   pull_request:
     branches:
       - main
-  workflow_dispatch: # Allows manual triggering of the workflow
+  workflow_dispatch:  # Manual işə salma
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps: 
-      - uses: actions/checkout@v4
-      - name: Set up Python
+      - name: Repository-i klonla
+        uses: actions/checkout@v4
+
+      - name: Python-u quraşdır
         uses: actions/setup-python@v4
         with:
-            python-version: '3.x' 
-      - name: Install dependencies
+          python-version: '3.x'
+
+      - name: Asılılıqları quraşdır
         run: |
           python -m pip install --upgrade pip
-          
-          pip3 install -r requirements.txt
-      - name: execute py script 
+          pip install python-slugify requests tqdm
+
+      - name: Python scriptini işə sal
         run: python main.py config.json
-      - name: commit and push files
+
+      - name: Dəyişiklikləri commit et və pushla
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "updated streams"
+          git add streams/ || true
+          git commit -m "updated streams" || true
           git push
