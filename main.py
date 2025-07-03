@@ -1,80 +1,73 @@
+import os
 import re
-import requests
 import sys
 import json
-import os
-from urllib.parse import urljoin
+import requests
 from slugify import slugify
 from tqdm import tqdm
+from urllib.parse import urljoin
 
-def get_stream_url(url, pattern, method="GET", headers={}, body={}):
-    if method == "GET":
-        r = requests.get(url, headers=headers)
-    elif method == "POST":
-        r = requests.post(url, json=body, headers=headers)
-    else:
-        print(method, "is not supported or wrong.")
-        return None
-    results = re.findall(pattern, r.text)
-    if len(results) > 0:
-        return results[0]
-    else:
-        print("No result found in the response. \nCheck your regex pattern {} for {}".format(method, url))
+def get_stream_url(url, pattern):
+    try:
+        r = requests.get(url, timeout=10)
+        results = re.findall(pattern, r.text)
+        if results:
+            return results[0].replace("\\", "")  # escape-ləri təmizləyir
+        else:
+            print(f"Nəticə tapılmadı: {url}")
+            return None
+    except Exception as e:
+        print(f"Hata: {e}")
         return None
 
 def playlist_text(url):
     text = ""
-    r = requests.get(url)
-    if r.status_code == 200:
-        for line in r.iter_lines():
-            line = line.decode()
-            if not line:
-                continue
-            if line[0] != "#":
-                text = text + urljoin(url, str(line))
-            else:
-                text = str(text) + str(line)
-            text += "\n"
-
-        return text
-    return ""
-
-
+    try:
+        r = requests.get(url)
+        if r.status_code == 200:
+            for line in r.iter_lines():
+                try:
+                    line = line.decode(errors="ignore")
+                except:
+                    continue
+                if not line:
+                    continue
+                if line[0] != "#":
+                    text += urljoin(url, line)
+                else:
+                    text += line
+                text += "\n"
+    except:
+        return ""
+    return text
 
 def main():
-    config_file = open(sys.argv[1], "r", encoding="utf-8")
-    config = json.load(config_file)
-    for site in config:
-        site_path = os.path.join(os.getcwd(), site["slug"])
-        os.makedirs(site_path, exist_ok=True)
-        for channel in tqdm(site["channels"]):
-            channel_file_path = os.path.join(site_path, slugify(channel["name"].lower()) + ".m3u8")
-            channel_url = site["url"]
-            for variable in channel["variables"]:
-                channel_url = channel_url.replace(variable["name"], variable["value"])
-            stream_url = get_stream_url(channel_url, site["pattern"])
-            if not stream_url:
-                if os.path.isfile(channel_file_path):
-                    os.remove(channel_file_path)
-                continue
-            if site["output_filter"] not in stream_url:
-                if os.path.isfile(channel_file_path):
-                    os.remove(channel_file_path)
-                continue
-            if site["mode"] == "variant":
-                text = playlist_text(stream_url)
-            elif site["mode"] == "master":
-                text = "#EXTM3U\n##EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH={}\n{}".format(site["bandwidth"], stream_url)
-            else:
-                print("Wrong or missing playlist mode argument")
-                text = ""
-            if text:
-                channel_file = open(channel_file_path, "w+")
-                channel_file.write(text)
-            else:
-                if os.path.isfile(channel_file_path):
-                    os.remove(channel_file_path)
-                
+    if len(sys.argv) < 2:
+        print("İstifadə: python main.py config.json")
+        return
 
-if __name__=="__main__": 
-    main() 
+    with open(sys.argv[1], "r", encoding="utf-8") as f:
+        config = json.load(f)
+
+    output_folder = config["output"].get("folder", "streams")
+    os.makedirs(output_folder, exist_ok=True)
+    pattern = config.get("pattern", r"https?:\/\/[^\s\"']+\.m3u8")
+
+    for ch in tqdm(config["channels"]):
+        name = ch["name"]
+        url = ch["url"]
+        stream_url = get_stream_url(url, pattern)
+        if stream_url:
+            playlist = playlist_text(stream_url)
+            if playlist:
+                file_path = os.path.join(output_folder, slugify(name.lower()) + ".m3u8")
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(playlist)
+                print(f"Yazıldı: {file_path}")
+            else:
+                print(f"{name} üçün playlist boşdur.")
+        else:
+            print(f"{name} üçün stream tapılmadı.")
+
+if __name__ == "__main__":
+    main()
