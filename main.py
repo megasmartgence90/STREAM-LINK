@@ -1,8 +1,22 @@
 import os
+import sys
+
+def install_and_import(package):
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"{package} modulu tapılmadı. Quraşdırılır...")
+        os.system(f"{sys.executable} -m pip install {package}")
+
+install_and_import("slugify")
+install_and_import("requests")
+install_and_import("tqdm")
+
+from slugify import slugify
 import re
 import requests
 import json
-from slugify import slugify
+
 
 def get_stream_url(url, pattern):
     try:
