@@ -1,12 +1,11 @@
 {
-  "output": {
-    "folder": "streams",
-    "bestFolder": "best",
-    "masterFolder": ""
-  },
-  "pattern": "https?:\\\\/\\\\/[^\"']+\\.m3u8",
-  "channels": [
-    {
+    "output": {
+        "folder": "streams",
+        "bestFolder": "best",
+        "masterFolder": ""
+    },
+    "channels": [
+        {
       "name": "showturk",
       "slug": "showturk",
       "url": "https://www.showturk.com.tr/canli-yayin/showturk"
