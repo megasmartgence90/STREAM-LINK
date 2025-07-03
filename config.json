@@ -2,7 +2,7 @@
   "output_folder": "recordings",
   "check_interval": 60,
   "youtube_links": [
-    "https://www.youtube.com/watch?v=oh1PbsoMQ0U",
+    "https://www.youtube.com/watch?v=z8o52IfBhGk",
     "https://www.youtube.com/watch?v=EXAMPLE2"
   ],
   "ffmpeg_path": "ffmpeg",
