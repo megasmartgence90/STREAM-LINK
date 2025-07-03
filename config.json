@@ -1,27 +1,11 @@
 {
-  "output": {
-    "folder": "streams",
-    "retry_count": 3
-  },
-  "selenium": {
-    "headless": true,
-    "timeout": 10
-  },
-  "channels": [
-    {
-      "name": "ATV",
-      "slug": "atv",
-      "url": "https://www.atv.com.tr/canli-yayin",
-      "enabled": true,
-      "type": "selenium",
-      "api_endpoint": "https://api.atv.com.tr/player/video/12345"
-    },
-    {
-      "name": "Show TV",
-      "slug": "showtv",
-      "url": "https://www.showtv.com.tr/canli-yayin",
-      "enabled": true,
-      "type": "selenium"
-    }
-  ]
+  "output_folder": "recordings",
+  "check_interval": 60,
+  "youtube_links": [
+    "https://www.youtube.com/watch?v=EXAMPLE1",
+    "https://www.youtube.com/watch?v=EXAMPLE2"
+  ],
+  "ffmpeg_path": "ffmpeg",
+  "max_duration": 14400,
+  "quality": "best"
 }
