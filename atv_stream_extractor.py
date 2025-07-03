@@ -2,8 +2,16 @@ import requests
 import re
 import json
 import os
+import subprocess
 from urllib.parse import urljoin, parse_qs
-from bs4 import BeautifulSoup
+from datetime import datetime
+
+# BeautifulSoup avtomatik quraşdırılması
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    subprocess.run(['pip', 'install', 'beautifulsoup4'], check=True)
+    from bs4 import BeautifulSoup
 
 def get_secure_stream(url):
     try:
@@ -18,12 +26,7 @@ def get_secure_stream(url):
         response.raise_for_status()
         
         # 2. BeautifulSoup ilə HTML təhlili
-        try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    import subprocess
-    subprocess.run(['pip', 'install', 'beautifulsoup4'], check=True)
-    from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
         
         # 3. Video konteynerini tap
         video_container = soup.find('div', {'class': 'player-container'})
@@ -94,7 +97,7 @@ def main():
     
     with open(os.path.join(config['output']['folder'], 'results.json'), 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
+    print("\n✨ Əməliyyat tamamlandı!")
 
 if __name__ == "__main__":
-    from datetime import datetime
     main()
