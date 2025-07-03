@@ -1,32 +1,55 @@
-import requests
-from bs4 import BeautifulSoup
-import re
 
-def get_m3u8_links(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-        m3u8_links = []
-        for script in soup.find_all('script'):
-            if script.string:
-                found_links = re.findall(r'https?://[^\s]+\.m3u8', script.string)
-                m3u8_links.extend(found_links)
-        return m3u8_links
-    except Exception as e:
-        print(f"Error: {e}")
-        return []
-
-def main():
-    url = "https://www.nowtv.com.tr/canli-yayin"
-    m3u8_links = get_m3u8_links(url)
-    if m3u8_links:
-        print("Found m3u8 links:")
-        for link in m3u8_links:
-            print(link)
-    else:
-        print("No m3u8 links found.")
-
-if __name__ == "__main__":
-    main()
-```
+{
+    "output": {
+        "folder": "streams",
+        "bestFolder": "best",
+        "masterFolder": ""
+    },
+    "channels": [
+        {
+            "name": "showturk",
+            "slug": "showturk",
+            "url": "https://www.showturk.com.tr/canli-yayin/showturk"
+        },
+        {
+            "name": "showmax",
+            "slug": "showmax",
+            "url": "https://www.showmax.com.tr/canliyayin"
+        },
+        {
+            "name": "showtv",
+            "slug": "showtv",
+            "url": "https://www.showtv.com.tr/canli-yayin"
+        },
+        {
+            "name": "atv",
+            "slug": "atv",
+            "url": "https://www.canlitv.me/atvcanli-yayin"
+        },
+        {
+            "name": "kanald",
+            "slug": "kanald",
+            "url": "https://www.kanald.com.tr/canli-yayin"
+        },
+        {
+            "name": "beyaz",
+            "slug": "beyaz",
+            "url": "https://beyaztv.com.tr/canli-yayin"
+        },
+        {
+            "name": "m24",
+            "slug": "m24",
+            "url": "https://www.m24.ru/live"
+        },
+        {
+            "name": "eurostartv",
+            "slug": "eurostartv",
+            "url": "https://www.eurostartv.com.tr/canli-izle"
+        },
+        {
+            "name": "yaban",
+            "slug": "yaban",
+            "url": "https://www.yabantv.com/broadcast"
+        }
+    ]
+}
