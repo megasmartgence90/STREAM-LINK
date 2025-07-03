@@ -18,7 +18,12 @@ def get_secure_stream(url):
         response.raise_for_status()
         
         # 2. BeautifulSoup ilə HTML təhlili
-        soup = BeautifulSoup(response.text, 'html.parser')
+        try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    import subprocess
+    subprocess.run(['pip', 'install', 'beautifulsoup4'], check=True)
+    from bs4 import BeautifulSoup
         
         # 3. Video konteynerini tap
         video_container = soup.find('div', {'class': 'player-container'})
