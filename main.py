@@ -4,7 +4,15 @@ import sys
 import json
 import os
 from urllib.parse import urljoin
-from slugify import slugify
+
+# --- slugify modulu yoxdursa, avtomatik quraşdır ---
+try:
+    from slugify import slugify
+except ImportError:
+    print("slugify modulu tapılmadı. Quraşdırılır...")
+    os.system('pip install python-slugify')
+    from slugify import slugify
+
 from tqdm import tqdm
 
 def get_stream_url(url, pattern, method="GET", headers={}, body={}):
@@ -13,13 +21,13 @@ def get_stream_url(url, pattern, method="GET", headers={}, body={}):
     elif method == "POST":
         r = requests.post(url, json=body, headers=headers)
     else:
-        print(method, "is not supported or wrong.")
+        print(method, "dəstəklənmir və ya səhv yazılıb.")
         return None
     results = re.findall(pattern, r.text)
     if len(results) > 0:
         return results[0]
     else:
-        print("No result found in the response. \nCheck your regex pattern {} for {}".format(method, url))
+        print("Cavabda uyğun nəticə tapılmadı. Regex patterni yoxlayın: {} üçün {}".format(method, url))
         return None
 
 def playlist_text(url):
@@ -31,15 +39,12 @@ def playlist_text(url):
             if not line:
                 continue
             if line[0] != "#":
-                text = text + urljoin(url, str(line))
+                text += urljoin(url, line)
             else:
-                text = str(text) + str(line)
+                text += line
             text += "\n"
-
         return text
     return ""
-
-
 
 def main():
     config_file = open(sys.argv[1], "r", encoding="utf-8")
@@ -66,15 +71,14 @@ def main():
             elif site["mode"] == "master":
                 text = "#EXTM3U\n##EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH={}\n{}".format(site["bandwidth"], stream_url)
             else:
-                print("Wrong or missing playlist mode argument")
+                print("playlist mode yanlışdır və ya qeyd olunmayıb.")
                 text = ""
             if text:
-                channel_file = open(channel_file_path, "w+")
-                channel_file.write(text)
+                with open(channel_file_path, "w+", encoding="utf-8") as channel_file:
+                    channel_file.write(text)
             else:
                 if os.path.isfile(channel_file_path):
                     os.remove(channel_file_path)
-                
 
-if __name__=="__main__": 
-    main() 
+if __name__ == "__main__": 
+    main()
