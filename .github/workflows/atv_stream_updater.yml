@@ -2,8 +2,8 @@ name: ATV Stream Updater
 
 on:
   schedule:
-    - cron: "0 */2 * * *"  # Hər 2 saatda bir
-  workflow_dispatch:       # Manual trigger üçün
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
 
 jobs:
   update:
@@ -19,7 +19,8 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install requests
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 selenium
           
       - name: Run ATV stream extractor
         run: |
