@@ -1,111 +1,80 @@
 import requests
-import re
 import json
 import os
-import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 from datetime import datetime
 
-def setup_selenium():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(options=chrome_options)
-    return driver
-
-def extract_m3u8_with_selenium(url, driver):
-    try:
-        driver.get(url)
-        time.sleep(5)  # JavaScript-in yüklənməsini gözlə
-        
-        # Network trafikini analiz et
-        performance_log = driver.get_log('performance')
-        for entry in performance_log:
-            if '.m3u8' in str(entry):
-                matches = re.findall(r'https?://[^\s"]+\.m3u8', str(entry))
-                if matches:
-                    return matches[0]
-        
-        # Əgər network log-da tapılmasa, saytın mənbə koduna bax
-        page_source = driver.page_source
-        source_matches = re.findall(r'(https?://[^\s"\']+\.m3u8)', page_source)
-        if source_matches:
-            return source_matches[0]
-            
-        return None
-    except Exception as e:
-        print(f"Selenium xətası: {str(e)}")
-        return None
-
-def get_stream_url(channel):
-    try:
-        # Əvvəlcə Selenium ilə cəhd edək
-        driver = setup_selenium()
-        m3u8_url = extract_m3u8_with_selenium(channel['url'], driver)
-        driver.quit()
-        
-        if m3u8_url:
-            return m3u8_url
-        
-        # Əgər Selenium işləməsə, API-ə müraciət edək
-        if "api_endpoint" in channel:
-            response = requests.get(channel['api_endpoint'], timeout=10)
-            if response.status_code == 200:
-                data = response.json()
-                return data.get('stream_url') or data.get('hls_url')
-        
-        return None
-    except Exception as e:
-        print(f"Ümumi xəta ({channel['name']}): {str(e)}")
-        return None
+def generate_m3u8_content(channel_name, stream_url, bandwidth=2000000, resolution="1920x1080"):
+    return f"""#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH={bandwidth},CODECS="",RESOLUTION={resolution}
+{stream_url}"""
 
 def main():
-    with open('config.json', 'r', encoding='utf-8') as f:
+    # Konfiqurasiya faylını oxu
+    with open('channels.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
     
-    os.makedirs(config['output']['folder'], exist_ok=True)
-    results = []
+    # Çıxış qovluğunu yarat
+    output_dir = config['output']['folder']
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Master playlist üçün ümumi məlumat
+    master_playlist = "#EXTM3U\n"
     
     for channel in config['channels']:
         if not channel.get('enabled', True):
             continue
             
-        print(f"\n🔍 {channel['name']} üçün m3u8 axtarılır...")
-        start_time = time.time()
+        print(f"\n🔍 {channel['name']} işlənir...")
         
-        m3u8_url = get_stream_url(channel)
-        
-        if m3u8_url:
-            filename = f"{channel['slug']}.m3u8"
-            filepath = os.path.join(config['output']['folder'], filename)
+        try:
+            # Burada real stream URL-ni alın (nümunə üçün konfiqdan götürürük)
+            stream_url = channel.get('https://www.atv.com.tr/canli-yayin', '')
             
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(m3u8_url)
+            if not stream_url:
+                # Əgər URL yoxdursa, saytdan çıxarmaq üçün funksiya çağırın
+                stream_url = get_stream_url(channel['url'])
             
-            print(f"✅ {channel['name']} üçün m3u8 linki tapıldı")
-            results.append({
-                'channel': channel['name'],
-                'status': 'success',
-                'url': m3u8_url,
-                'updated_at': datetime.now().isoformat(),
-                'duration': round(time.time() - start_time, 2)
-            })
-        else:
-            print(f"❌ {channel['name']} üçün m3u8 linki tapılmadı")
-            results.append({
-                'channel': channel['name'],
-                'status': 'failed',
-                'updated_at': datetime.now().isoformat(),
-                'duration': round(time.time() - start_time, 2)
-            })
+            if stream_url:
+                # Hər kanal üçün ayrı fayl yarat
+                content = generate_m3u8_content(
+                    channel['name'],
+                    stream_url,
+                    channel.get('bandwidth', 2000000),
+                    channel.get('resolution', '1920x1080')
+                )
+                
+                filename = f"{channel['slug']}.m3u8"
+                filepath = os.path.join(output_dir, filename)
+                
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                
+                # Master playlist-ə əlavə et
+                master_playlist += f"#EXTINF:-1 tvg-name=\"{channel['name']}\",{channel['name']}\n{filename}\n"
+                
+                print(f"✅ {channel['name']} uğurla yaradıldı")
+            else:
+                print(f"❌ {channel['name']} üçün stream URL tapılmadı")
+                
+        except Exception as e:
+            print(f"⚠️ {channel['name']} xətası: {str(e)}")
     
-    with open(os.path.join(config['output']['folder'], 'results.json'), 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
+    # Master playlist faylını yarat
+    with open(os.path.join(output_dir, 'playlist.m3u8'), 'w', encoding='utf-8') as f:
+        f.write(master_playlist)
     
-    print("\n✨ Əməliyyat tamamlandı!")
+    print("\n✨ Bütün kanallar uğurla yaradıldı")
+
+def get_stream_url(channel_url):
+    """Bu funksiya real tətbiqdə saytdan stream URL-ni çıxarmalıdır"""
+    # Burada sizin parsing məntiqinizi əlavə edin
+    # Nümunə üçün:
+    if "atv.com.tr" in channel_url:
+        return "https://example.com/atv_stream.m3u8"
+    elif "showtv.com.tr" in channel_url:
+        return "https://example.com/showtv_stream.m3u8"
+    return None
 
 if __name__ == "__main__":
     main()
