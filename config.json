@@ -3,21 +3,25 @@
     "folder": "streams",
     "retry_count": 3
   },
+  "selenium": {
+    "headless": true,
+    "timeout": 10
+  },
   "channels": [
     {
       "name": "ATV",
       "slug": "atv",
       "url": "https://www.atv.com.tr/canli-yayin",
       "enabled": true,
-      "type": "api",
-      "api_endpoint": "https://api.atv.com.tr/player/video/{id}"
+      "type": "selenium",
+      "api_endpoint": "https://api.atv.com.tr/player/video/12345"
     },
     {
       "name": "Show TV",
       "slug": "showtv",
       "url": "https://www.showtv.com.tr/canli-yayin",
       "enabled": true,
-      "type": "web"
+      "type": "selenium"
     }
   ]
 }
