@@ -2,43 +2,18 @@
   "output": {
     "folder": "streams"
   },
-  "pattern": "https?:\\/\\/[^\\s\"']+\\.m3u8",
   "channels": [
     {
-      "name": "showturk",
-      "url": "https://www.showturk.com.tr/canli-yayin/showturk"
+      "name": "ATV",
+      "slug": "atv",
+      "url": "https://www.atv.com.tr/canli-yayin",
+      "enabled": true
     },
     {
-      "name": "showmax",
-      "url": "https://www.showmax.com.tr/canliyayin"
-    },
-    {
-      "name": "showtv",
-      "url": "https://www.showtv.com.tr/canli-yayin"
-    },
-    {
-      "name": "atv",
-      "url": "https://www.canlitv.me/atvcanli-yayin"
-    },
-    {
-      "name": "kanald",
-      "url": "https://www.kanald.com.tr/canli-yayin"
-    },
-    {
-      "name": "beyaz",
-      "url": "https://beyaztv.com.tr/canli-yayin"
-    },
-    {
-      "name": "m24",
-      "url": "https://www.m24.ru/live"
-    },
-    {
-      "name": "eurostartv",
-      "url": "https://www.eurostartv.com.tr/canli-izle"
-    },
-    {
-      "name": "yaban",
-      "url": "https://www.yabantv.com/broadcast"
+      "name": "Show TV",
+      "slug": "showtv",
+      "url": "https://www.showtv.com.tr/canli-yayin",
+      "enabled": true
     }
   ]
 }
