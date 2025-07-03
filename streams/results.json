@@ -2,11 +2,13 @@
   {
     "channel": "ATV",
     "status": "failed",
-    "updated_at": "2025-07-03T21:47:36.404338"
+    "updated_at": "2025-07-03T21:51:32.848113",
+    "duration": 3.35
   },
   {
     "channel": "Show TV",
     "status": "failed",
-    "updated_at": "2025-07-03T21:47:36.404350"
+    "updated_at": "2025-07-03T21:51:33.199055",
+    "duration": 0.35
   }
 ]
