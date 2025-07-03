@@ -1,61 +1,80 @@
-import os
-import sys
-
-def install_and_import(package):
-    try:
-        __import__(package)
-    except ImportError:
-        print(f"{package} modulu tapılmadı. Quraşdırılır...")
-        os.system(f"{sys.executable} -m pip install {package}")
-
-install_and_import("slugify")
-install_and_import("requests")
-install_and_import("tqdm")
-
-from slugify import slugify
 import re
 import requests
+import sys
 import json
+import os
+from urllib.parse import urljoin
+from slugify import slugify
+from tqdm import tqdm
 
-
-def get_stream_url(url, pattern):
-    try:
-        r = requests.get(url, timeout=10)
-        results = re.findall(pattern, r.text)
-        if results:
-            return results[0].replace("\\", "")  # escape-ləri təmizləyirik
-        else:
-            print(f"Nəticə tapılmadı: {url}")
-            return None
-    except Exception as e:
-        print(f"Xəta baş verdi: {e}")
+def get_stream_url(url, pattern, method="GET", headers={}, body={}):
+    if method == "GET":
+        r = requests.get(url, headers=headers)
+    elif method == "POST":
+        r = requests.post(url, json=body, headers=headers)
+    else:
+        print(method, "is not supported or wrong.")
+        return None
+    results = re.findall(pattern, r.text)
+    if len(results) > 0:
+        return results[0]
+    else:
+        print("No result found in the response. \nCheck your regex pattern {} for {}".format(method, url))
         return None
 
-def save_stream(name, folder, stream_url):
-    os.makedirs(folder, exist_ok=True)
-    filename = os.path.join(folder, slugify(name.lower()) + ".m3u8")
-    try:
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(stream_url)
-        print(f"Yazıldı: {filename}")
-    except Exception as e:
-        print(f"Yazılarkən xəta: {e}")
+def playlist_text(url):
+    text = ""
+    r = requests.get(url)
+    if r.status_code == 200:
+        for line in r.iter_lines():
+            line = line.decode()
+            if not line:
+                continue
+            if line[0] != "#":
+                text = text + urljoin(url, str(line))
+            else:
+                text = str(text) + str(line)
+            text += "\n"
+
+        return text
+    return ""
+
+
 
 def main():
-    with open("config.json", "r", encoding="utf-8") as f:
-        config = json.load(f)
+    config_file = open(sys.argv[1], "r", encoding="utf-8")
+    config = json.load(config_file)
+    for site in config:
+        site_path = os.path.join(os.getcwd(), site["slug"])
+        os.makedirs(site_path, exist_ok=True)
+        for channel in tqdm(site["channels"]):
+            channel_file_path = os.path.join(site_path, slugify(channel["name"].lower()) + ".m3u8")
+            channel_url = site["url"]
+            for variable in channel["variables"]:
+                channel_url = channel_url.replace(variable["name"], variable["value"])
+            stream_url = get_stream_url(channel_url, site["pattern"])
+            if not stream_url:
+                if os.path.isfile(channel_file_path):
+                    os.remove(channel_file_path)
+                continue
+            if site["output_filter"] not in stream_url:
+                if os.path.isfile(channel_file_path):
+                    os.remove(channel_file_path)
+                continue
+            if site["mode"] == "variant":
+                text = playlist_text(stream_url)
+            elif site["mode"] == "master":
+                text = "#EXTM3U\n##EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH={}\n{}".format(site["bandwidth"], stream_url)
+            else:
+                print("Wrong or missing playlist mode argument")
+                text = ""
+            if text:
+                channel_file = open(channel_file_path, "w+")
+                channel_file.write(text)
+            else:
+                if os.path.isfile(channel_file_path):
+                    os.remove(channel_file_path)
+                
 
-    pattern = config.get("pattern", r"https?:\/\/.*?\.m3u8")
-    output_folder = config["output"]["folder"]
-
-    for ch in config["channels"]:
-        name = ch["name"]
-        url = ch["url"]
-        stream_url = get_stream_url(url, pattern)
-        if stream_url:
-            save_stream(name, output_folder, stream_url)
-        else:
-            print(f"{name} üçün stream tapılmadı.")
-
-if __name__ == "__main__":
-    main()
+if __name__=="__main__": 
+    main() 
