@@ -41,6 +41,14 @@ def playlist_text(url):
         return ""
     return text
 
+def save_if_changed(path, content):
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            if f.read() == content:
+                return  # Heç nə dəyişməyib
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+
 def main():
     if len(sys.argv) < 2:
         print("İstifadə: python main.py config.json")
@@ -61,8 +69,7 @@ def main():
             playlist = playlist_text(stream_url)
             if playlist:
                 file_path = os.path.join(output_folder, slugify(name.lower()) + ".m3u8")
-                with open(file_path, "w", encoding="utf-8") as f:
-                    f.write(playlist)
+                save_if_changed(file_path, playlist)
                 print(f"Yazıldı: {file_path}")
             else:
                 print(f"{name} üçün playlist boşdur.")
