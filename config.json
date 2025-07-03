@@ -1,54 +1,55 @@
 {
-    "output": {
-        "folder": "streams",
-        "bestFolder": "best",
-        "masterFolder": ""
+  "output": {
+    "folder": "streams",
+    "bestFolder": "best",
+    "masterFolder": ""
+  },
+  "pattern": "https?:\\\\/\\\\/[^\"']+\\.m3u8",
+  "channels": [
+    {
+      "name": "showturk",
+      "slug": "showturk",
+      "url": "https://www.showturk.com.tr/canli-yayin/showturk"
     },
-    "channels": [
-        {
-            "name": "showturk",
-            "slug": "showturk",
-            "url": "https://www.showturk.com.tr/canli-yayin/showturk"
-        },
-        {
-            "name": "showmax",
-            "slug": "showmax",
-            "url": "https://www.showmax.com.tr/canliyayin"
-        },
-        {
-            "name": "showtv",
-            "slug": "showtv",
-            "url": "https://www.showtv.com.tr/canli-yayin"
-        },
-        {
-            "name": "atv",
-            "slug": "atv",
-            "url": "https://www.canlitv.me/atvcanli-yayin"
-        },
-        {
-            "name": "kanald",
-            "slug": "kanald",
-            "url": "https://www.kanald.com.tr/canli-yayin"
-        },
-        {
-            "name": "beyaz",
-            "slug": "beyaz",
-            "url": "https://beyaztv.com.tr/canli-yayin"
-        },
-        {
-            "name": "m24",
-            "slug": "m24",
-            "url": "https://www.m24.ru/live"
-        },
-        {
-            "name": "eurostartv",
-            "slug": "eurostartv",
-            "url": "https://www.eurostartv.com.tr/canli-izle"
-        },
-        {
-            "name": "yaban",
-            "slug": "yaban",
-            "url": "https://www.yabantv.com/broadcast"
-        }
-    ]
+    {
+      "name": "showmax",
+      "slug": "showmax",
+      "url": "https://www.showmax.com.tr/canliyayin"
+    },
+    {
+      "name": "showtv",
+      "slug": "showtv",
+      "url": "https://www.showtv.com.tr/canli-yayin"
+    },
+    {
+      "name": "atv",
+      "slug": "atv",
+      "url": "https://www.canlitv.me/atvcanli-yayin"
+    },
+    {
+      "name": "kanald",
+      "slug": "kanald",
+      "url": "https://www.kanald.com.tr/canli-yayin"
+    },
+    {
+      "name": "beyaz",
+      "slug": "beyaz",
+      "url": "https://beyaztv.com.tr/canli-yayin"
+    },
+    {
+      "name": "m24",
+      "slug": "m24",
+      "url": "https://www.m24.ru/live"
+    },
+    {
+      "name": "eurostartv",
+      "slug": "eurostartv",
+      "url": "https://www.eurostartv.com.tr/canli-izle"
+    },
+    {
+      "name": "yaban",
+      "slug": "yaban",
+      "url": "https://www.yabantv.com/broadcast"
+    }
+  ]
 }
