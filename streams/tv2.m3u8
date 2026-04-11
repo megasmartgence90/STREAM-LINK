@@ -1,0 +1,10 @@
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=2200000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080
+https://tv2vod.duhnet.tv/hls/_/i7/rehber365portakalcicegifes/rehber365portakalcicegifes.smil/hlssubplaylist-ovbnqq8h_oacnGx7.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=1500000,CODECS="avc1.64001f,mp4a.40.2",RESOLUTION=1280x720
+https://tv2vod.duhnet.tv/hls/_/i7/rehber365portakalcicegifes/rehber365portakalcicegifes.smil/hlssubplaylist-ovdnQkcf_oacnGx7.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=1000000,CODECS="avc1.4D401e,mp4a.40.2",RESOLUTION=854x480
+https://tv2vod.duhnet.tv/hls/_/i7/rehber365portakalcicegifes/rehber365portakalcicegifes.smil/hlssubplaylist-ovenohwd_oacnGx7.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=820000,CODECS="avc1.4D401e,mp4a.40.2",RESOLUTION=640x360
+https://tv2vod.duhnet.tv/hls/_/i7/rehber365portakalcicegifes/rehber365portakalcicegifes.smil/hlssubplaylist-ovfn0f6c_oacnGx7.m3u8
