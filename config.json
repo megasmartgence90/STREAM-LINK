@@ -1,9 +1,9 @@
-
+```json
 {
     "output": {
         "folder": "streams",
         "bestFolder": "best",
-        "masterFolder": ""
+        "masterFolder": "master"
     },
     "channels": [
         {
@@ -127,7 +127,7 @@
             "url": "https://www.twitch.tv/tvkayseri"
         },
         {
-            "name": "Konuşam Tom",
+            "name": "Konuşan Tom",
             "slug": "konusantom",
             "url": "https://www.youtube.com/@TalkingFriendsTR/live"
         },
@@ -183,3 +183,4 @@
         }
     ]
 }
+```
