@@ -1,10 +1,10 @@
 #EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=8000000,RESOLUTION=1920x1080,NAME="1080p"
-https://ciner.daioncdn.net/showtv/showtv_1080p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qjbn02bjoxl&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
+https://ciner.daioncdn.net/showtv/showtv_1080p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qk1bdg27c69&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
 #EXT-X-STREAM-INF:BANDWIDTH=4500000,RESOLUTION=1280x720,NAME="720p"
-https://ciner.daioncdn.net/showtv/showtv_720p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qjbn02bjoxl&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
+https://ciner.daioncdn.net/showtv/showtv_720p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qk1bdg27c69&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
 #EXT-X-STREAM-INF:BANDWIDTH=1800000,RESOLUTION=854x480,NAME="480p"
-https://ciner.daioncdn.net/showtv/showtv_480p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qjbn02bjoxl&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
+https://ciner.daioncdn.net/showtv/showtv_480p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qk1bdg27c69&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
 #EXT-X-STREAM-INF:BANDWIDTH=1000000,RESOLUTION=640x360,NAME="360p"
-https://ciner.daioncdn.net/showtv/showtv_360p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qjbn02bjoxl&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
+https://ciner.daioncdn.net/showtv/showtv_360p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8qk1bdg27c69&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
