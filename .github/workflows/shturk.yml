@@ -31,7 +31,7 @@ jobs:
         run: python3 -m pip install requests
 
       - name: Execute Python script
-        run: python3 STREAM-LINK/shturk.py > STREAM-LINK/shturk.m3u8
+        run: python3 res/26-2/shturk.py > res/26-2/shturk.m3u8
 
       - name: git add
         run: |
